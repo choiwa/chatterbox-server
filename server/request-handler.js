@@ -21,6 +21,8 @@ var requestHandler = function(request, response) {
   //
   // Documentation for both request and response can be found in the HTTP section at
   // http://nodejs.org/documentation/api/
+  // console.log(request);
+  // console.log(response);
 
   // Do some basic logging.
   //
@@ -44,7 +46,7 @@ var requestHandler = function(request, response) {
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
   response.writeHead(statusCode, headers);
-
+  
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
@@ -71,3 +73,5 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+exports.requestHandler = requestHandler;
+exports.defaultCorsHeaders = defaultCorsHeaders;
