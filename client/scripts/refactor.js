@@ -19,10 +19,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // jQuery-based Implementation of (minimal) chatterbox client
 /////////////////////////////////////////////////////////////////////////////
-
 app = {
 
-  server: 'http://parse.CAMPUS.hackreactor.com/chatterbox/classes/messages',
+  server: 'http://127.0.0.1:3000/classes/messages',
 
   init: function() {
     // Get username
@@ -121,7 +120,7 @@ app = {
 /////////////////////////////////////////////////////////////////////////////
 
 var Message = Backbone.Model.extend({
-  url: 'https://api.parse.com/1/classes/messages/',
+  url: 'http://127.0.0.1:3000/classes/messages/',
   defaults: {
     username: '',
     text: ''

@@ -68,6 +68,7 @@ var app = {
 
         // Store messages for caching later
         app.messages = data.results;
+        console.log(data.results.text)
 
         // Get the last message
         var mostRecentMessage = data.results[data.results.length - 1];
