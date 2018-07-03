@@ -11,6 +11,8 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+var storage = require('./log');
+let messages = storage.messages;
 
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -30,23 +32,68 @@ var requestHandler = function(request, response) {
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
+  console.log(request.method);
+
+  
+  const { headers, method, url } = request;
+  let body = messages;
 
   // The outgoing status.
-  var statusCode = 200;
+  request.on('error', (err) => {
+    console.error(err);
+    response.statusCode = 404;
+  })
+ 
+  if(request.method === 'GET') {
+    //respond with saved data.
+    
+    response.statusCode = 200;
+    headers['Content-Type'] = 'text/plain';
+    let results = body;
+    const responseBody = { headers, method, url, body, results };
+    console.log('Response sent: ', responseBody);
+    response.write(JSON.stringify(responseBody));
+    response.end();
+
+    //TODO
+    //1. How to send the data, string?
+      //Read our file, respond.
+    //2. How to we render data 
+    //3. How does the URL affect the data seen by the client.
+    // response.write(messages);
+  } else if (request.method === 'POST' && request.url ==='/classes/messages') {
+    //1. How do we save the new data
+    request.on('data', (message) => {
+      body.push(message);
+      console.log('Message object stored: ', messsage);
+      storage.messages.push(message);
+    }).on('end', () => {
+      response.end(() => body = Buffer.concat(body).toString());
+      response.on('error', (err) => {
+        console.error(err);
+      });
+
+    })
+    response.write(JSON.stringify(responseBody));
+    response.end();
+  }
 
   // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
+  // var headers = defaultCorsHeaders;
 
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'text/plain';
+  // headers['Content-Type'] = 'text/plain';
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
+  //Did above in GET resuest
+  // response.writeHead(statusCode, headers);
   
+  // if(request.url ==)
+
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
@@ -54,7 +101,6 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('Hello, World!');
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
